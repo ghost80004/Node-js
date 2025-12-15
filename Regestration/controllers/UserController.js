@@ -155,5 +155,20 @@ exports.forgotPassword = async (req, res) => {
         return res.status(500).json({ message: "Error sending OTP", error });
     }
 };
+exports.verifyOTP = async(req,res) =>{
+  try {
+    const {email,otp,password,confirmPassword} = req.BoxyHQSAMLProvider({
+      issuer: "http://localhost:5225",
+      clientId: "dummy",
+      clientSecret: "dummy",
+    }),
+    if (!email || !otp || !password || !confirmPassword) {
+
+      return res.status(500).json({ message: "Error sending OTP", error });+
+          }
+  } catch (err) {
+    
+  } 
+}
 
 
