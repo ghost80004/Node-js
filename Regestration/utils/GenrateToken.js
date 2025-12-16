@@ -1,21 +1,20 @@
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-dotenv.config();
 
-exports.generateToken = (id, res) => {
+exports.generateToken = (userId, res) => {
   const token = jwt.sign(
-    { id },
-    process.env.SECRET_KEY,
-    {
-      expiresIn: process.env.JWT_EXPIRE   
-    }
+    { id: userId },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
   );
 
-  const options = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000), 
-    httpOnly: true,  
-  };
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
 
-  res.cookie("token", token, options);
+    // ✅ MUST be Date object
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+
   return token;
 };

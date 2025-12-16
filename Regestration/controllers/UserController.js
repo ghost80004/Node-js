@@ -155,20 +155,39 @@ exports.forgotPassword = async (req, res) => {
         return res.status(500).json({ message: "Error sending OTP", error });
     }
 };
-exports.verifyOTP = async(req,res) =>{
-  try {
-    const {email,otp,password,confirmPassword} = req.BoxyHQSAMLProvider({
-      issuer: "http://localhost:5225",
-      clientId: "dummy",
-      clientSecret: "dummy",
-    }),
-    if (!email || !otp || !password || !confirmPassword) {
+exports.verifyOTP = async(req, res) =>{
+    try {
+        const {email, otp, password , confirmPassword} = req.body
+        if (!email || !otp || !password || !confirmPassword) {
+            return res.status(401).json({message: "All Fields are Required !"})
+        }
+        const checkOTP = await OTP.findOne({email})
+        if (!checkOTP) {
+            return res.status(401).json({message: "OTP not Found !"})
+        }
+        if (checkOTP.otp !== otp) {
+            return res.status(401).json({message: "OTP Invalid !"})
+        }
+        if (checkOTP.expireAt < Date.now()) {
+            return res.status(401).json({message: "OTP was Expired"})
+        }
+        const user = await User.findOne({email})
+         if (!user) {
+            return res.status(401).json({message: "User not Found !"})
+        }
+        if (password !== confirmPassword) {
+            return res.status(401).json({message: "OTP does not Match with Confirm-Password"})
+        }
+        const matchPassword = await bcrypt.hash(password, 10)
+        user.password = matchPassword
 
-      return res.status(500).json({ message: "Error sending OTP", error });+
-          }
-  } catch (err) {
-    
-  } 
+        await user.save()
+        await OTP.deleteOne({email})
+        res.status(201).json({message: "OTP Verify Successfully."})
+        
+    } catch (error) {
+        res.status(501).json({message: "Error While Verify !", error})
+    }
 }
 
 

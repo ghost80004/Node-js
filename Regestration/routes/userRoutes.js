@@ -21,4 +21,7 @@ router.get("/:id",isAuth, getOne);
 router.put("/:id",isAuth, update);
 router.delete("/:id",isAuth, remove);
 
+
+
+
 module.exports = router;
