@@ -21,7 +21,7 @@ const sendOTP = async ({ email, subject, message }) => {
         console.log("Email Sent:", info.response);
     } catch (error) {
         console.log("Email Error:", error);
-        throw error; // <-- isse controller me real error milega
+        throw error; 
     }
 };
 

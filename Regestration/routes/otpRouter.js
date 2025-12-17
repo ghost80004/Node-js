@@ -5,5 +5,5 @@ const {isAuth} = require("../middleware/isAuth")
 const router = express.Router()
 
 router.post("/generateOTP",forgotPassword)
-router.post("/verify",isAuth,verifyOTP)
+router.post("/verify",verifyOTP)
 module.exports = router
