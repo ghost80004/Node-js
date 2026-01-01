@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../middleware/blogUpload");
 const {
   getBlogs,
   createBlog,
@@ -9,7 +10,7 @@ const {
 
 const router = express.Router();
 
-router.post("/create", createBlog);
+router.post("/create", upload.single("thumbnail"), createBlog);
 router.get("/", getBlogs);
 router.get("/:id", getBlog);
 router.put("/:id", updateBlog);

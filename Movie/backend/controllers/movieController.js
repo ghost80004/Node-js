@@ -1,29 +1,24 @@
-const Movie = require("../models/movieModel");
+const Movie = require("../models/Movie");
 
-// CREATE
+// CREATE MOVIE (ADMIN)
 exports.createMovie = async (req, res) => {
-  try {
-    const movie = await Movie.create({
-      ...req.body,
-      thumbnail: req.file.path,
-    });
-    res.status(201).json({ success: true, movie });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  const { title, description, genre } = req.body;
+
+  const movie = await Movie.create({
+    title: title,
+    description: description,
+    genre: genre,
+    poster: req.file ? req.file.path : null,
+    createdBy: req.user._id
+  });
+
+  res.status(201).json({ success: true, movie });
 };
 
 // READ ALL
-exports.getMovies = async (req, res) => {
-  const movies = await Movie.find();
-  res.status(200).json({ success: true, movies });
-};
-
-// READ ONE
-exports.getMovie = async (req, res) => {
-  const movie = await Movie.findById(req.params.id);
-  if (!movie) return res.status(404).json({ message: "Movie not found" });
-  res.status(200).json({ success: true, movie });
+exports.getAllMovies = async (req, res) => {
+  const movies = await Movie.find().sort({ createdAt: -1 });
+  res.json({ success: true, movies });
 };
 
 // UPDATE
@@ -33,13 +28,21 @@ exports.updateMovie = async (req, res) => {
     req.body,
     { new: true }
   );
-  if (!movie) return res.status(404).json({ message: "Movie not found" });
-  res.status(200).json({ success: true, movie });
+
+  if (!movie) {
+    return res.status(404).json({ message: "Movie not found" });
+  }
+
+  res.json({ success: true, movie });
 };
 
 // DELETE
 exports.deleteMovie = async (req, res) => {
   const movie = await Movie.findByIdAndDelete(req.params.id);
-  if (!movie) return res.status(404).json({ message: "Movie not found" });
-  res.status(200).json({ success: true, message: "Movie deleted" });
+
+  if (!movie) {
+    return res.status(404).json({ message: "Movie not found" });
+  }
+
+  res.json({ message: "Movie deleted" });
 };

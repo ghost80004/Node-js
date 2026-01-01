@@ -1,6 +1,6 @@
 const Blog = require("../models/blogModel");
 
-// CREATE
+
 exports.createBlog = async (req, res) => {
   try {
     const blog = await Blog.create({
@@ -16,13 +16,13 @@ exports.createBlog = async (req, res) => {
   }
 };
 
-// READ ALL
+
 exports.getBlogs = async (req, res) => {
   const blogs = await Blog.find().sort({ createdAt: -1 });
   res.status(200).json({ success: true, blogs });
 };
 
-// READ ONE
+
 exports.getBlog = async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   if (!blog)
@@ -31,7 +31,7 @@ exports.getBlog = async (req, res) => {
   res.status(200).json({ success: true, blog });
 };
 
-// UPDATE
+
 exports.updateBlog = async (req, res) => {
   const blog = await Blog.findByIdAndUpdate(
     req.params.id,
@@ -45,7 +45,7 @@ exports.updateBlog = async (req, res) => {
   res.status(200).json({ success: true, blog });
 };
 
-// DELETE
+
 exports.deleteBlog = async (req, res) => {
   const blog = await Blog.findByIdAndDelete(req.params.id);
 

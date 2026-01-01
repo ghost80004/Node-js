@@ -1,19 +1,27 @@
 const express = require("express");
-const upload = require("../middleware/uploadThumbnail");
+const isAuth = require("../middleware/isAuth");
+const isAdmin = require("../middleware/isAdmin");
+const upload = require("../middleware/upload");
+
 const {
   createMovie,
-  getMovies,
-  getMovie,
   updateMovie,
   deleteMovie,
+  getAllMovies
 } = require("../controllers/movieController");
 
 const router = express.Router();
 
-router.post("/create", upload.single("thumbnail"), createMovie);
-router.get("/", getMovies);
-router.get("/:id", getMovie);
-router.put("/:id", updateMovie);
-router.delete("/:id", deleteMovie);
+router.post(
+  "/create",
+  isAuth,
+  isAdmin,
+  upload.single("poster"),
+  createMovie
+);
+
+router.put("/:id", isAuth, isAdmin, updateMovie);
+router.delete("/:id", isAuth, isAdmin, deleteMovie);
+router.get("/", getAllMovies);
 
 module.exports = router;
